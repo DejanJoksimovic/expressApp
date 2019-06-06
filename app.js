@@ -1,5 +1,6 @@
 const express = require('express')
-var customRouter = require('./customRouter')
+const customRouter = require('./customRouter')
+const builder = require('xmlbuilder');
 const app = express()
 const port = 3000
 
@@ -23,8 +24,16 @@ app.use('/static', express.static('public')) // use prefix '/static' in the requ
 
 app.use('/customRouter', customRouter)
 
+const xmlDoc = builder.create('root')
+  .ele('xmlbuilder')
+    .ele('repo', {'type': 'git'}, 'git://github.com/oozcitak/xmlbuilder-js.git')
+  .end({ pretty: true});
+
+
 app.get('/', (_req, res) => res.send('Hello World!'))
+app.get('/error', (_req, res) => res.status(500).send('error!'))
 app.get('/json', (_req, res) => res.json({ user: 'tobi1' }))
+app.get('/xml', (_req, res) => res.set('Content-Type', 'text/xml') && res.send(xmlDoc))
 app.get('/jsonp', (_req, res) => res.json({ user: 'tobi2' }))
 app.get('/downloadApple', (_req, res) => res.download('./public/small-red-apple-hi.png'))
 app.post('/', (_req, res) => res.send('Got a POST request!'))
@@ -66,3 +75,28 @@ app.get('/users/:userId/books/:bookId', (req, res) => {
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
+
+app.get('/userTest/:id', function (req, res, next) {
+  // if the user ID is 0, skip to the next route
+  if (req.params.id === '0') next('route')
+  // otherwise pass the control to the next middleware function in this stack
+  else next()
+}, function (req, res, next) {
+  // send a regular response
+  res.send('regular')
+})
+
+// handler for the /user/:id path, which sends a special response
+app.get('/userTest/:id', function (req, res, next) {
+  res.send('special')
+})
+
+app.get('/errorHandler', function (req, res, next) {
+  fs.readFile('/file-does-not-exist', function (err, data) {
+    if (err) {
+      next(err) // Pass errors to Express.
+    } else {
+      res.send(data)
+    }
+  })
+})
