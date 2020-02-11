@@ -1,8 +1,8 @@
 const express = require('express')
 const customRouter = require('./customRouter')
 const builder = require('xmlbuilder');
-const app = express()
-const port = 3000
+const app = express();
+const port = 3001;
 
 app.use(express.static('public'));
 app.use(function(_req, res, next) {
@@ -30,7 +30,7 @@ const xmlDoc = builder.create('root')
   .end({ pretty: true});
 
 
-app.get('/', (_req, res) => res.send('Hello World!'))
+app.get('/', (_req, res) => setTimeout((() => res.send('Hello World!')), 2000));
 app.get('/error', (_req, res) => res.status(500).send('error!'))
 app.get('/json', (_req, res) => res.json({ user: 'tobi1' }))
 app.get('/xml', (_req, res) => res.set('Content-Type', 'text/xml') && res.send(xmlDoc))
