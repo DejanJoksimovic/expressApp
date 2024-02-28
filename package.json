@@ -10,13 +10,10 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.1",
-    "nodemon": "^2.0.19",
     "xmlbuilder": "^15.1.1"
   },
   "devDependencies": {
+    "nodemon": "^2.0.19",
     "webpack": "^5.73.0"
-  },
-  "overrides": {
-    "semver": "^7.5.3"
   }
 }
